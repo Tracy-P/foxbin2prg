@@ -2890,11 +2890,13 @@ DEFINE CLASS c_foxbin2prg AS Session
 				tcType				= UPPER( EVL(tcType,'') )
 				.declareDLL()
 
+            llEscKeyRestored = .T.
 				IF THIS.l_CancelWithEscKey THEN
 					lcOldSetEscape	= SET("Escape")
 					lcOldOnEscape	= ON("Escape")
 					ON ESCAPE ERROR 1799
 					SET ESCAPE ON
+               llEscKeyRestored = .F.
 				ENDIF
 
 				DO CASE
@@ -3441,7 +3443,7 @@ DEFINE CLASS c_foxbin2prg AS Session
 			ENDWITH && THIS
 
 		CATCH TO toEx
-			IF THIS.l_CancelWithEscKey THEN
+			IF (NOT llEscKeyRestored) AND THIS.l_CancelWithEscKey THEN
 				IF EMPTY(lcOldOnEscape)
 					ON ESCAPE
 				ELSE
@@ -3492,7 +3494,7 @@ DEFINE CLASS c_foxbin2prg AS Session
 			ENDIF
 
 		FINALLY
-			IF NOT llEscKeyRestored AND THIS.l_CancelWithEscKey THEN
+			IF (NOT llEscKeyRestored) AND THIS.l_CancelWithEscKey THEN
 				IF EMPTY(lcOldOnEscape)
 					ON ESCAPE
 				ELSE
